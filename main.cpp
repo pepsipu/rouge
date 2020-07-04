@@ -17,6 +17,6 @@ int main()
     std::cout << "Handle to " << noitaProcess::noitaExecName << " made." << std::endl;
 
     Player::NoitaPlayer::Get().setNoitaHandle(noitaHandle);
-    Player::NoitaPlayer::Get().setBaseAddress(noitaProcess::getNoitaBaseAddress(noitaProcess));
-    std::cout << std::dec << Player::NoitaPlayer::Get().getGold();
+    Player::NoitaPlayer::Get().setBaseAddress(noitaProcess::getBaseAddress(noitaProcess::noitaExecName, noitaProcess));
+    std::cout << std::hex << Player::NoitaPlayer::Get().readDword(0);
 }

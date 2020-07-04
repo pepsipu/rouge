@@ -35,6 +35,14 @@ namespace Player
             ReadProcessMemory(this->m_noitaHandle, (LPCVOID)(this->m_playerBaseAddress + PlayerOffsets::Gold), &gold, sizeof(DWORD), NULL);
             return gold;
         }
+        void setGold(DWORD gold) {
+            WriteProcessMemory(this->m_noitaHandle, (LPVOID)(this->m_playerBaseAddress + PlayerOffsets::Gold), &gold, sizeof(DWORD), NULL);
+        }
+        DWORD readDword(DWORD address) {
+            DWORD ret;
+            ReadProcessMemory(this->m_noitaHandle, (LPCVOID)(address), &ret, sizeof(DWORD), NULL);
+            return ret;
+        }
         NoitaPlayer()
         {
         }

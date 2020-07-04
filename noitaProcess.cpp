@@ -8,7 +8,7 @@ namespace noitaProcess
 {
     const char noitaExecName[] = "noita.exe";
 
-    uintptr_t getNoitaBaseAddress(DWORD procId)
+    uintptr_t getBaseAddress(const char *moduleName, DWORD procId)
     {
         uintptr_t modBaseAddr = 0;
         HANDLE hSnap = CreateToolhelp32Snapshot(TH32CS_SNAPMODULE | TH32CS_SNAPMODULE32, procId);
@@ -21,7 +21,7 @@ namespace noitaProcess
             {
                 do
                 {
-                    if (!stricmp((char *)modEntry.szModule, noitaExecName))
+                    if (!stricmp((char *)modEntry.szModule, moduleName))
                     {
                         modBaseAddr = (uintptr_t)modEntry.modBaseAddr;
                         break;
