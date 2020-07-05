@@ -9,17 +9,28 @@
 #pragma comment(lib, "User32.lib")
 #pragma comment(lib, "detours.lib")
 
-const char luaScript[] = "\\rouge.lua";
+#define DebugPrint(a) MessageBoxA(NULL, (a), "epic", MB_OK)
 
-int fake_luaopen_jit(Exports::lua_State *L) {
+const char luaScript[] = "rouge.lua";
+
+int fake_luaopen_jit(Exports::lua_State *L)
+{
     int ret = Exports::luaopen_jit(L);
-    char cwd[MAX_PATH + sizeof(luaScript)];
-    GetCurrentDirectoryA(sizeof(cwd), (LPSTR) cwd);
-    Exports::luaL_loadfilex(L, strcat(cwd, luaScript), NULL);
+
+    // obtain current handle
+    HMODULE hm = NULL;
+    GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS |
+                          GET_MODULE_HANDLE_EX_FLAG_UNCHANGED_REFCOUNT,
+                      (LPCSTR)&luaScript, &hm);
+    char dllPath[MAX_PATH + sizeof(luaScript)];
+    GetModuleFileNameA(hm, dllPath, sizeof(dllPath));
+    *(strrchr(dllPath, '\\') + 1) = 0;
+    Exports::luaL_loadfilex(L, strcat(dllPath, luaScript), NULL);
     Exports::lua_pcall(L, 0, -1, 0);
     DetourTransactionBegin();
-    DetourDetach(&(PVOID&)Exports::luaopen_jit, fake_luaopen_jit);
+    DetourDetach(&(PVOID &)Exports::luaopen_jit, fake_luaopen_jit);
     DetourTransactionCommit();
+    DebugPrint(dllPath);
     return ret;
 }
 
@@ -33,7 +44,7 @@ BOOL WINAPI DllMain(HINSTANCE hInstance, DWORD dwReason, LPVOID p)
         DetourTransactionBegin();
         // give current thread a little heads up we are going to be committing a transaction
         DetourUpdateThread(GetCurrentThread());
-        DetourAttach(&(PVOID&)Exports::luaopen_jit, fake_luaopen_jit);
+        DetourAttach(&(PVOID &)Exports::luaopen_jit, fake_luaopen_jit);
         DetourTransactionCommit();
         break;
     }
