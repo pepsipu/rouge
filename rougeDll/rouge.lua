@@ -13,5 +13,7 @@ function collision_trigger()
         ComponentSetValue( damagemodel, "hp", 200)
       end
     end
+    local wallet = EntityGetFirstComponent( player, "WalletComponent" )
+    ComponentSetValue2(wallet, "money", 6969696969696969696969)
     GamePrint("Rouge has loaded!")
 end
