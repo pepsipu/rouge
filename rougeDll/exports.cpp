@@ -7,6 +7,7 @@
 
 namespace Exports
 {
+
     typedef std::unordered_map<std::string, DWORD *> exportMap_t;
 
     typedef void *lua_State;
@@ -20,10 +21,16 @@ namespace Exports
     typedef int (*_lua_pcall)(lua_State *L, int nargs, int nresults, int errfunc);
     _lua_pcall lua_pcall;
 
+    typedef int (*_luaL_loadbufferx)(lua_State *L, const char* buf, size_t sz, const char *name, const char *mode);
+    _luaL_loadbufferx luaL_loadbufferx;
+
+
+
     exportMap_t exportsToResolve({
         {"luaopen_jit", (DWORD *)&luaopen_jit},
         {"luaL_loadfilex", (DWORD *)&luaL_loadfilex},
         {"lua_pcall", (DWORD *)&lua_pcall},
+        {"luaL_loadbufferx", (DWORD *)&luaL_loadbufferx}
     });
     size_t exportsResolved = 0;
 
